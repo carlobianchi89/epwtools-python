@@ -1,5 +1,7 @@
 # epwtools
 
+[![carlobianchi89/epwtools-python MCP server](https://glama.ai/mcp/servers/carlobianchi89/epwtools-python/badges/score.svg)](https://glama.ai/mcp/servers/carlobianchi89/epwtools-python)
+
 Python client, command-line tool and MCP server for **[EPW.tools](https://epw.tools)**: EnergyPlus weather files
 (EPW, with DDY design days and STAT summaries) for any location on Earth.
 
