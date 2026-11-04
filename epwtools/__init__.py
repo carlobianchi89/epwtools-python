@@ -1,5 +1,5 @@
 """epw.tools Python SDK — generate and analyse EPW weather files."""
-__version__ = "0.5.2"
+__version__ = "0.5.3"
 
 from .client import EPWClient, EPWToolsError  # noqa: F401
 
