@@ -1,0 +1,107 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "epwtools"
+version = "0.5.2"
+description = "Python client, CLI and MCP server for EPW.tools: EnergyPlus weather files (EPW, DDY, STAT) for any location, past years, typical years and future climate"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = [
+    "epw", "energyplus", "weather", "climate", "building-simulation",
+    "eplus", "ashrae", "cmip6", "future-climate", "tmy",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "typer>=0.12",
+    "rich>=13",
+    "requests>=2.30",
+]
+
+[project.urls]
+Homepage = "https://epw.tools"
+Documentation = "https://epw.tools/?tab=api"
+"AI assistants (MCP)" = "https://epw.tools/ai-weather-files"
+Repository = "https://github.com/carlobianchi89/epwtools-python"
+"Bug Tracker" = "https://github.com/carlobianchi89/epwtools-python/issues"
+
+[project.scripts]
+weatherproof = "epwtools.cli:app"
+epwtools = "epwtools.cli:app"
+epw-tools-mcp = "epwtools.mcp_server:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "responses>=0.25", "httpx>=0.27", "respx>=0.21"]
+# Async client (httpx) is opt-in to keep the default install lean.
+# Install with: pip install 'epwtools[aio]'
+# (Renamed from ``async`` because PEP 621 / pip 24+ reject reserved-keyword
+# extras names on the strict resolver path.)
+aio = ["httpx>=0.27"]
+# MCP server extra — pulls the Model Context Protocol runtime so AI assistants
+# can call EPW.tools. Install with: pip install 'epwtools[mcp]'
+# or run without installing: uvx --from 'epwtools[mcp]' epw-tools-mcp
+mcp = ["mcp>=1.2,<2"]  # mcp 2.x renamed FastMCP (2026); migrate before lifting
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/epwtools",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["epwtools"]
+
+[tool.pytest.ini_options]
+# Custom markers used across the test suite.
+# `cds_smoke` flags tests that talk to the real Copernicus CDS API
+# and therefore require the CDS_API_KEY env var.  They are skipped
+# by default and selectable via `pytest -m cds_smoke`.
+markers = [
+    "cds_smoke: integration tests that hit the real Copernicus CDS API (requires CDS_API_KEY)",
+    "slow: tests that take more than a few seconds to run",
+    "import_time: cold-import-time guards (R20)",
+    "redis_live: tests that require a live Redis daemon (skipped without REDIS_TEST_URL)",
+]
+# Hostile peer-review #26 — codify the test-ignore inventory so the
+# command in CLAUDE.md and AllMightyTest.sh stays in sync with reality.
+# Each entry is OFF the default collection path because it requires
+# either a third-party service, a real Playwright browser binary, or
+# multi-hour EnergyPlus simulations.  Tests stay in the tree (and
+# selectable explicitly) so the contributor can opt in.
+#   - backend/tests/DC-EnergyTest/        : multi-hour EnergyPlus sweeps
+#   - backend/tests/test_dc_energy_all.py : wrapper for the above
+#   - backend/tests/test_cds_smoke.py     : real CDS API (cds_smoke marker)
+#   - backend/tests/test_playwright.py    : real browser, prefer ``cd frontend && npm run test:e2e``
+#   - backend/tests/test_comprehensive.py : full-stack matrix, hours long
+# To run them explicitly:
+#   pytest backend/tests/DC-EnergyTest -p no:cacheprovider
+#   pytest -m cds_smoke backend/tests/test_cds_smoke.py
+#   pytest backend/tests/test_playwright.py
+#   pytest backend/tests/test_comprehensive.py
+norecursedirs = [
+    "backend/tests/DC-EnergyTest",
+]
+# `addopts` is the supported mechanism for embedding default --ignore
+# flags in pytest.ini-style configuration (collect_ignore is a
+# conftest.py hook, not a pyproject.toml key).
+addopts = [
+    "--ignore=backend/tests/test_dc_energy_all.py",
+    "--ignore=backend/tests/test_cds_smoke.py",
+    "--ignore=backend/tests/test_playwright.py",
+    "--ignore=backend/tests/test_comprehensive.py",
+]
+
