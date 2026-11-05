@@ -1,7 +1,7 @@
 # epwtools
 
 [![carlobianchi89/epwtools-python MCP server](https://glama.ai/mcp/servers/carlobianchi89/epwtools-python/badges/score.svg)](https://glama.ai/mcp/servers/carlobianchi89/epwtools-python)
-[![epwtools on AI Agents Listing](https://aiagentslisting.com/epwtools/badge.svg?claim=6490db96b6a1edba121bdfcb3281533e)](https://aiagentslisting.com/mcp/epwtools)
+[![epwtools on AI Agents Listing](https://aiagentslisting.com/epwtools/badge.svg)](https://aiagentslisting.com/mcp/epwtools)
 
 Python client, command-line tool and MCP server for **[EPW.tools](https://epw.tools)**: EnergyPlus weather files
 (EPW, with DDY design days and STAT summaries) for any location on Earth.
